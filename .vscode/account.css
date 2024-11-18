@@ -1,0 +1,129 @@
+/* Account Page Styles */
+
+body {
+    font-family: 'rowdies';
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative; 
+    overflow: hidden; 
+  }
+  
+  body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat;
+    filter: blur(2px);
+    z-index: -1;
+  }
+  
+.sidebar {
+    background-color: #263548;
+    color: white;
+    width: 200px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 110vh;
+    z-index: 1;
+  }
+  
+  .menu-links {
+    flex-grow: 1; 
+  }
+  
+  .bottom-links {
+    margin-top: auto; 
+  }
+  
+  .sidebar a {
+    text-decoration: none;
+    color: white;
+    display: block;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 4px;
+  }
+  
+  .sidebar a:hover {
+    background-color: #1a2939;
+  }
+  
+  .logo {
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    max-width: 150px;
+  }
+
+.content {
+    padding: 20px;
+    background-color: #fff;
+    margin-top: 90px;
+    flex-grow: 1;
+    position: relative;
+    z-index: 1;
+    border: 3px solid #f8f9fa;
+}
+
+.form-label {
+    font-weight: bold;
+    color: #333;
+}
+
+.form-control {
+    border: 1px solid #343a40;
+}
+
+.btn-outline-secondary {
+    border-color: #343a40;
+    color: #343a40;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #1a2939;
+    color: white;
+    border-color: #1a2939;
+}
+
+h5 {
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+.form-check-label {
+    margin-left: 8px;
+    color: #333;
+}
+
+.btn-primary {
+    background-color: #1a2939;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #263548;
+}
+
+/* Adjustments for mobile responsiveness */
+@media (max-width: 768px) {
+    .content {
+        margin-top: 30px;
+    }
+
+    .sidebar {
+        height: auto;
+    }
+
+    .bottom-links {
+        margin-top: 20px;
+    }
+}
