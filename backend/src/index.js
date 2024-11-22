@@ -1,54 +1,69 @@
 const express = require('express');
 const path = require('path');
-const bcrypt = require('bcrypt');
-const collections = require('./config');
+const mongoose = require('mongoose');
+const collections = require('./config'); // Ensure this is your MongoDB connection and model file
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views')); // Set the views directory correctly
+
+// Connect to MongoDB without deprecated options
+mongoose.connect('mongodb://localhost:27017/loginapp')
+    .then(() => {
+        console.log('Connected to MongoDB');
+    })
+    .catch((err) => {
+        console.error('MongoDB connection error:', err);
+    });
 
 // Serve the login page at the root URL
 app.get('/', (req, res) => {
-    res.render('login'); // Make sure you have a 'login.ejs' file in your views folder
+    console.log('Received a request to the root URL');
+    res.render('login', { user: null }); // Pass user as null
 });
 
 // Handle login POST request
-app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-
-    // Check if username and password are provided
-    if (!username || !password) {
-        return res.status(400).send('Please enter both username and password.'); // Return an error message
-    }
-
+app.post('/users', async (req, res) => {
     try {
-        // Check if username exists
-        const check = await collections.findOne({ username });
-        if (!check) {
-            return res.status(404).send('Undefined'); // User not found
+        const { email, password } = req.body;
+
+        // Validate input
+        if (!email || !password) {
+            return res.status(400).json({ error: 'Please enter both email and password.' });
         }
-        
-        // Compare the provided password with the stored hashed password
-        const isPasswordMatch = await bcrypt.compare(password, check.password);
-        
-        if (isPasswordMatch) {
-            // Redirect to the desired HTML file on successful login
-            return res.sendFile(path.join(__dirname, '../public/index.html')); // Adjust path as necessary
+
+        // Find the admin user in the database
+        const adminUser  = await collections.findOne({ email: email.trim() });
+
+        if (!adminUser ) {
+            return res.status(401).json({ error: 'Invalid email or password.' });
+        }
+
+        // Check if the password matches (you may want to hash passwords in a real application)
+        if (adminUser .password === password.trim()) {
+            // Successful login
+            return res.redirect('/dashboard'); // Redirect to a dashboard or success page
         } else {
-            return res.status(401).send('Password incorrect.');
+            return res.status(401).json({ error: 'Invalid email or password.' });
         }
     } catch (error) {
-        console.log('Error in Login', error);
-        return res.status(500).send('Internal Server Error.');
+        console.error('Error during login:', error);
+        return res.status(500).json({ error: 'Internal server error.' });
     }
 });
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error('Global error handler:', err.stack);
+    res.status(500).send('Something broke!');
+});
 
-// Serve static files (if you have any, such as CSS or JS)
-app.use(express.static(path.join(__dirname, '../public')));
+// Serve static files (CSS, JS, etc.)
+app.use(express.static(path.join(__dirname, 'public')));
 
-const port = 5000;
+const port = 3000;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

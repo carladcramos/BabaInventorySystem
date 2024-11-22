@@ -1,21 +1,20 @@
 const mongoose = require('mongoose');
 
-// Connect to MongoDB
-mongoose.connect("mongodb://localhost:27017/loginapp");
+// Connect to MongoDB without deprecated options
+mongoose.connect('mongodb://localhost:27017/loginapp')
+    .then(() => {
+        console.log('Connected to MongoDB');
+    })
+    .catch((err) => {
+        console.error('MongoDB connection error:', err);
+    });
 
-mongoose.connection.on('connected', () => {
-    console.log("Connected to MongoDB");
-});
-
-mongoose.connection.on('error', (err) => {
-    console.error("MongoDB connection error:", err);
-});
-
-// Define the login schema
-const LoginSchema = new mongoose.Schema({
-    username: {
+// Define the admin schema
+const AdminSchema = new mongoose.Schema({
+    email: {
         type: String,
         required: true,
+        unique: true // Ensure email is unique
     },
     password: {
         type: String,
@@ -23,7 +22,7 @@ const LoginSchema = new mongoose.Schema({
     }
 });
 
-// Create a model for the users collection
-const collection = mongoose.model("users", LoginSchema);
+// Create a model for the admins collection
+const collections = mongoose.model('users', AdminSchema);
 
-module.exports = collection;
+module.exports = collections;
