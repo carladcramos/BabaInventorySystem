@@ -20,14 +20,14 @@ app.post('/login', async (req, res) => {
 
     // Check if username and password are provided
     if (!username || !password) {
-        return res.send('Please enter both username and password.'); // Return an error message
+        return res.status(400).send('Please enter both username and password.'); // Return an error message
     }
 
     try {
         // Check if username exists
         const check = await collections.findOne({ username });
         if (!check) {
-            return res.send('Undefined'); // User not found
+            return res.status(404).send('Undefined'); // User not found
         }
         
         // Compare the provided password with the stored hashed password
@@ -37,11 +37,11 @@ app.post('/login', async (req, res) => {
             // Redirect to the desired HTML file on successful login
             return res.sendFile(path.join(__dirname, '../public/index.html')); // Adjust path as necessary
         } else {
-            return res.send('Password Incorrect');
+            return res.status(401).send('Password incorrect.');
         }
     } catch (error) {
         console.log('Error in Login', error);
-        return res.send('Error in Login');
+        return res.status(500).send('Internal Server Error.');
     }
 });
 
