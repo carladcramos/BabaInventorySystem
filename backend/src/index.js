@@ -32,28 +32,29 @@ app.post('/users', async (req, res) => {
 
         // Validate input
         if (!email || !password) {
-            return res.status(400).json({ error: 'Please enter both email and password.' });
+            return res.redirect('/?error=Please enter both email and password.');
         }
 
         // Find the admin user in the database
-        const adminUser  = await collections.findOne({ email: email.trim() });
+        const adminUser = await collections.findOne({ email: email.trim() });
 
-        if (!adminUser ) {
-            return res.status(401).json({ error: 'Invalid email or password.' });
+        if (!adminUser) {
+            return res.redirect('/?error=Invalid email or password.');
         }
 
-        // Check if the password matches (you may want to hash passwords in a real application)
-        if (adminUser .password === password.trim()) {
+        // Check if the password matches
+        if (adminUser.password === password.trim()) {
             // Successful login
-            return res.redirect('/dashboard'); // Redirect to a dashboard or success page
+            return res.redirect('/dashboard?success=Login successful!');
         } else {
-            return res.status(401).json({ error: 'Invalid email or password.' });
+            return res.redirect('/?error=Invalid email or password.');
         }
     } catch (error) {
         console.error('Error during login:', error);
         return res.status(500).json({ error: 'Internal server error.' });
     }
 });
+
 // Global error handler
 app.use((err, req, res, next) => {
     console.error('Global error handler:', err.stack);
