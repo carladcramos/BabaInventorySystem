@@ -10,12 +10,12 @@
 <body class="fade-in">
     <div class="container-fluid d-flex min-vh-100 p-0">
         <div class="welcome-message col-12 col-md-6 d-flex align-items-center justify-content-center flex-column p-5">
-            <img src="img/logo.png" alt="BABA Hardware Store Logo" class="logo mb-4">
+            <img src="/img/logo.png" alt="BABA Hardware Store Logo" class="logo mb-4">
             <h1 class="text-white text-center">Welcome to BABA</h1>
             <p class="text-white">Please log in to continue</p>
         </div>
         <div class="login-form col-12 col-md-6 d-flex align-items-center justify-content-center">
-            <form id="loginForm" action="/users" method="POST" class="w-50" onsubmit="showLoginAlert(event)">
+            <form action="/users" method="POST" class="w-50" onsubmit="showLoginAlert(event)">
                 <div class="form-group mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required autocomplete="on">
@@ -53,7 +53,7 @@
             alert("Login submitted! Please wait while we process your information.");
             
             // After the alert is closed, the form will be submitted
-            document.getElementById('loginForm').submit();  // Submits the form after the alert
+            document.querySelector('form').submit();  // Submits the form after the alert
         }
     </script>
 </body>
