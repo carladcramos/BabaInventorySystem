@@ -81,11 +81,11 @@ body {
 /* Sidebar */
 .sidebar .bottom-links {
   margin-top: auto;
-  color: white; /* Changed from #f4f7fc to white */
+  color: white; 
   }
   
   .sidebar .bottom-links a {
-  color: white; /* Ensure links inside bottom-links are white */
+  color: white; 
   text-decoration: none;
   display: block;
   margin: 15px 0;
@@ -113,7 +113,7 @@ body {
   }
  
   
-  h3 {
+  h1 {
     font-size: 32px;
     font-weight: bold;
     margin-bottom: 30px;
@@ -122,7 +122,7 @@ body {
     
     padding: 20px;
     background-color: #fff;
-    margin-top: 20px;
+    margin-top: 5 px;
     flex-grow: 1;
     position: relative;
     z-index: 1; 

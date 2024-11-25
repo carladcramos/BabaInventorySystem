@@ -54,14 +54,13 @@ body {
   background-color: #1a2939;
 }
 
-/* Sidebar */
 .sidebar .bottom-links {
 margin-top: auto;
-color: white; /* Changed from #f4f7fc to white */
+color: white; 
 }
 
 .sidebar .bottom-links a {
-color: white; /* Ensure links inside bottom-links are white */
+color: white; 
 text-decoration: none;
 display: block;
 margin: 15px 0;
