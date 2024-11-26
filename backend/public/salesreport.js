@@ -1,106 +1,99 @@
-// Fetch and display all sales data in the table
+let currentPage = 1; // Tracks the current page
+const rowsPerPage = 10; // Number of rows per page
+let allSalesData = []; // Stores all fetched sales data (unfiltered)
+let filteredSalesData = []; // Stores sales data after filtering
+
+// Fetch all sales data from the server
 async function fetchSalesData() {
     try {
         const response = await fetch('http://localhost:3000/api/sales');
         if (response.ok) {
-            const sales = await response.json();
-            updateSalesTable(sales);
+            allSalesData = await response.json(); // Save all sales data
+            filteredSalesData = allSalesData; // Initialize filtered data
+            updateSalesTable(); // Update table with all sales
+            updatePagination(); // Initialize pagination
         } else {
             console.error('Error fetching sales data');
         }
     } catch (error) {
-        console.error('Error fetching sales data:', error);
+        console.error('Error fetching data:', error);
     }
 }
 
-// Fetch and display all categories in the dropdown
-async function fetchCategories() {
-    try {
-        const response = await fetch('http://localhost:3000/api/sales/categories');
-        if (response.ok) {
-            const categories = await response.json();
-            updateCategoryDropdown(categories);
-        } else {
-            console.error('Error fetching categories');
-        }
-    } catch (error) {
-        console.error('Error fetching categories:', error);
-    }
-}
-
-// Update the sales table with data
-function updateSalesTable(sales) {
+// Populate the sales table with data for the current page
+function updateSalesTable() {
     const tableBody = document.querySelector('#salesTable tbody');
     tableBody.innerHTML = ''; // Clear existing rows
 
-    sales.forEach(sale => {
+    // Determine the slice of data for the current page
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    const paginatedSales = filteredSalesData.slice(start, end);
+
+    // Add rows to the table
+    paginatedSales.forEach(sale => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${sale.productName}</td>
             <td>${sale.productID}</td>
             <td>${sale.productSold}</td>
+            <td>${sale.category}</td>
             <td>${new Date(sale.date).toLocaleDateString()}</td>
         `;
         tableBody.appendChild(row);
     });
 }
 
-// Update the category dropdown with options
-function updateCategoryDropdown(categories) {
-    const categorySelect = document.querySelector('#category');
-    if (!categories || categories.length === 0) {
-        console.warn('No categories found!');
-        return;
-    }
+// Update pagination controls and page indicator
+function updatePagination() {
+    const totalPages = Math.ceil(filteredSalesData.length / rowsPerPage);
 
-    categorySelect.innerHTML = `<option value="" selected>- Select Category -</option>`; // Default option
+    // Update the page indicator
+    const pageIndicator = document.getElementById('pageIndicator');
+    pageIndicator.textContent = `Page ${currentPage} of ${totalPages}`;
 
-    categories.forEach(category => {
-        const option = document.createElement('option');
-        option.value = category;
-        option.textContent = category;
-        categorySelect.appendChild(option);
-    });
-
-    console.log('Dropdown updated with categories:', categories); // Debug log
+    // Enable/disable navigation buttons
+    document.getElementById('prevPage').disabled = currentPage === 1;
+    document.getElementById('nextPage').disabled = currentPage === totalPages || totalPages === 0;
 }
 
-
-// Filter sales based on selected category and date range
-async function filterSales() {
-    const category = document.querySelector('#category').value;
-    const dateRange = document.querySelector('#dateRange').value;
-
-    const params = new URLSearchParams();
-
-    if (category) params.append('category', category);
-
-    if (dateRange) {
-        const [startDate, endDate] = dateRange.split(' - ');
-        if (startDate && endDate) {
-            params.append('startDate', startDate.trim());
-            params.append('endDate', endDate.trim());
-        }
+// Handle Previous button click
+document.getElementById('prevPage').addEventListener('click', () => {
+    if (currentPage > 1) {
+        currentPage--;
+        updateSalesTable();
+        updatePagination();
     }
-
-    try {
-        const response = await fetch(`http://localhost:3000/api/sales/filter?${params.toString()}`);
-        if (response.ok) {
-            const filteredSales = await response.json();
-            updateSalesTable(filteredSales);
-        } else {
-            console.error('Error fetching filtered sales data');
-        }
-    } catch (error) {
-        console.error('Error fetching filtered sales data:', error);
-    }
-}
-
-// Event listeners for filter changes
-document.addEventListener('DOMContentLoaded', () => {
-    fetchSalesData(); // Load all sales data on page load
-    fetchCategories(); // Load categories on page load
-
-    document.querySelector('#category').addEventListener('change', filterSales);
-    document.querySelector('#dateRange').addEventListener('change', filterSales);
 });
+
+// Handle Next button click
+document.getElementById('nextPage').addEventListener('click', () => {
+    const totalPages = Math.ceil(filteredSalesData.length / rowsPerPage);
+    if (currentPage < totalPages) {
+        currentPage++;
+        updateSalesTable();
+        updatePagination();
+    }
+});
+
+// Filter sales by category and reset pagination
+function filterTableByCategory() {
+    const selectedCategory = document.getElementById('category').value;
+
+    // Filter sales data based on selected category
+    if (selectedCategory === "") {
+        filteredSalesData = allSalesData; // No filter, show all data
+    } else {
+        filteredSalesData = allSalesData.filter(sale => sale.category === selectedCategory);
+    }
+
+    currentPage = 1; // Reset to the first page after filtering
+    updateSalesTable(); // Update table with filtered data
+    updatePagination(); // Update pagination
+}
+
+// Event listener for category dropdown change
+document.getElementById('category').addEventListener('change', filterTableByCategory);
+
+// Initial data fetch on page load
+document.addEventListener('DOMContentLoaded', fetchSalesData);

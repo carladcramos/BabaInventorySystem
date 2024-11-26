@@ -6,6 +6,8 @@ const path = require('path');
 const dotenv = require('dotenv');
 const salesRouter = require('./routes/salesRouter');  // This line imports the sales route
 const authRouter = require('./routes/authRouter');  // Adjust path if needed
+const accountRouter = require('./routes/accountRouter');
+const purchaseOrderRouter = require('./routes/productRouter');
 
 dotenv.config();
 const app = express();
@@ -28,6 +30,8 @@ app.use('/api/auth', authRouter);  // This will make '/register' available at '/
 app.use(authRouter); // This will support '/login' for POST requests
 app.use('/', authRouter);         // Supports /login
 app.use('/api/sales', salesRouter);
+app.use('/api/account', accountRouter);
+app.use('/api/products', productRouter);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)

@@ -33,15 +33,16 @@ router.get('/:productID', async (req, res) => {
     }
 });
 
-// GET route to fetch distinct categories
+// GET route to fetch distinct categories from the sales collection
 router.get('/categories', async (req, res) => {
     try {
-        const categories = await Sale.distinct('category'); // Fetch distinct categories
+        const categories = await Sale.distinct('category');
         res.status(200).json(categories);
-    } catch (err) {
-        res.status(500).json({ message: 'Error fetching categories', error: err.message });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching categories', error: error.message });
     }
 });
+
 // GET route to fetch sales data with optional filters (category and date range)
 router.get('/filter', async (req, res) => {
     try {
@@ -83,18 +84,4 @@ router.put('/:id', async (req, res) => {
         res.status(500).json({ message: 'Error updating sale', error: err.message });
     }
 });
-
-// DELETE route to delete sales data
-router.delete('/:id', async (req, res) => {
-    try {
-        const deletedSale = await Sale.findByIdAndDelete(req.params.id);
-        if (!deletedSale) {
-            return res.status(404).json({ message: 'Sale not found' });
-        }
-        res.status(200).json({ message: 'Sale deleted successfully' });
-    } catch (err) {
-        res.status(500).json({ message: 'Error deleting sale', error: err.message });
-    }
-});
-
 module.exports = router;
