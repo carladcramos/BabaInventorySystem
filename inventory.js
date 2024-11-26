@@ -4,18 +4,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchBar = document.getElementById("searchInput");
 
     let editingRow = null;
+    let productIdCounter = 1; // Start product ID counter
 
     // Add new product or edit existing product
     addItemForm.addEventListener("submit", (event) => {
         event.preventDefault();
 
         const productName = document.getElementById("productName").value.trim();
-        const productID = document.getElementById("productID").value.trim();
         const category = document.getElementById("category").value;
         const stock = parseInt(document.getElementById("stock").value.trim(), 10);
         const threshold = parseInt(document.getElementById("threshold").value.trim(), 10);
 
-        if (!productName || !productID || isNaN(stock) || !category || isNaN(threshold)) {
+        if (!productName || isNaN(stock) || !category || isNaN(threshold)) {
             alert("Please fill in all fields correctly.");
             return;
         }
@@ -24,10 +24,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // If editing an existing row
         if (editingRow) {
-            updateRow(editingRow, productName, productID, category, stock, threshold, status);
+            updateRow(editingRow, productName, category, stock, threshold, status);
             editingRow = null; // Reset the editingRow to null after editing
         } else {
-            // Otherwise, add a new product row
+            // Generate a new Product ID
+            const productID = generateProductID();
+
+            // Add a new product row
             const newRow = createNewRow(productName, productID, category, stock, threshold, status);
             tableBody.appendChild(newRow);
             attachRowEventListeners(newRow); // Attach event listeners to the new row's buttons
@@ -78,10 +81,16 @@ document.addEventListener("DOMContentLoaded", () => {
         return newRow;
     }
 
+    // Generate a unique Product ID
+    function generateProductID() {
+        const id = productIdCounter.toString().padStart(3, '0'); // Format as 3-digit ID
+        productIdCounter++;
+        return id;
+    }
+
     // Function to update an existing row
-    function updateRow(row, productName, productID, category, stock, threshold, status) {
+    function updateRow(row, productName, category, stock, threshold, status) {
         row.children[0].textContent = productName;
-        row.children[1].textContent = productID;
         row.children[2].textContent = category;
         row.children[3].textContent = stock;
         row.children[4].textContent = threshold;
@@ -113,7 +122,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Pre-fill modal with existing row data
             document.getElementById("productName").value = row.children[0].textContent.trim();
-            document.getElementById("productID").value = row.children[1].textContent.trim();
             document.getElementById("category").value = row.children[2].textContent.trim();
             document.getElementById("stock").value = parseInt(row.children[3].textContent.trim(), 10);
             document.getElementById("threshold").value = parseInt(row.children[4].textContent.trim(), 10);

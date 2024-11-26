@@ -54,9 +54,26 @@ body {
   background-color: #1a2939;
 }
 
+/* Sidebar */
 .sidebar .bottom-links {
   margin-top: auto;
-}
+  color: white; 
+  }
+  
+  .sidebar .bottom-links a {
+  color: white; 
+  text-decoration: none;
+  display: block;
+  margin: 15px 0;
+  padding: 10px 15px;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  }
+  
+  .sidebar .bottom-links a:hover {
+  background-color: #1a2939;
+  }
 
 /* Wrapper */
 .wrapper {
@@ -64,11 +81,20 @@ body {
   padding: 20px;
 }
 
+.card .card-header{
+  padding-top: 50px;
+}
+
+.card .card-body{
+  padding-bottom: 100px;
+}
+
 /* Dashboard Main Title */
 .dashboard-title {
   font-size: 32px;
   font-weight: bold;
   margin-bottom: 30px;
+  text-align: center;
 }
 
 /* Cards */
@@ -76,21 +102,24 @@ body {
   display: flex;
   gap: 30px;
   margin-bottom: 30px;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 
 .dashboard-cards .card {
   background-color: #fff;
-  padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   flex: 1;
   text-align: center;
 }
 
+
 .dashboard-cards .card-header {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: bold;
   color: #333;
+  background-color: #F8B400;
 }
 
 .dashboard-cards .card-body {
@@ -99,14 +128,17 @@ body {
   font-weight: 600;
 }
 
+
 /* Tables */
 .tables {
   display: flex;
   gap: 30px;
+  padding-left: 30px;
 }
 
 .table-container {
   width: 48%;
+  height: 1px;
 }
 
 .table-header {

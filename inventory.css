@@ -56,7 +56,23 @@ body {
 
 .sidebar .bottom-links {
   margin-top: auto;
-}
+  color: white; 
+  }
+  
+  .sidebar .bottom-links a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  margin: 15px 0;
+  padding: 10px 15px;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  }
+  
+  .sidebar .bottom-links a:hover {
+  background-color: #1a2939;
+  }
 
 /* Wrapper */
 .wrapper {
@@ -65,8 +81,10 @@ body {
 }
 
 h1 {
-  font-size: 24px;
-  margin-bottom: 20px;
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-align: center;
 }
 
 .filters {
@@ -78,13 +96,14 @@ h1 {
 .search-bar {
   padding: 10px;
   font-size: 16px;
-  width: 200px;
+  width: 350px;
 }
 
 .filter-options {
   display: flex;
   gap: 10px;
 }
+
 
 select, button {
   padding: 10px 20px;
@@ -107,11 +126,12 @@ button:disabled {
 
 .action-buttons {
   margin-bottom: 20px;
+  padding-left: 1450px;
 }
 
 .action-buttons button {
   padding: 10px 20px;
-  background-color: #4caf50;
+  background-color: #3a4a63;
   color: white;
   font-size: 16px;
 }
