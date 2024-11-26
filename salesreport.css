@@ -121,7 +121,7 @@ body {
   .content {
     padding: 20px;
     background-color: #fff;
-    margin-top: 1px;
+    margin-top: 10px;
     flex-grow: 1;
     position: relative;
     z-index: 1; 
