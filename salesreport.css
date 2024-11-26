@@ -119,10 +119,9 @@ body {
     margin-bottom: 30px;
   }
   .content {
-    
     padding: 20px;
     background-color: #fff;
-    margin-top: 5 px;
+    margin-top: 1px;
     flex-grow: 1;
     position: relative;
     z-index: 1; 
