@@ -8,6 +8,9 @@ function populateTable(data) {
     // Clear existing rows
     tableBody.innerHTML = '';
 
+    // Sort data by date in descending order (latest first)
+    data.sort((a, b) => new Date(b.date) - new Date(a.date));
+
     data.forEach(item => {
         const row = document.createElement('tr');
 
