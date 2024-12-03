@@ -10,6 +10,5 @@ router.post("/", productController.addProduct);
 router.put("/:id", productController.updateProduct);
 router.patch("/restock/:id", productController.restockProduct);
 router.delete("/:id", productController.deleteProduct);
-router.post("/confirm-order", productController.confirmOrder);  // <-- Added this route
 
 module.exports = router;
