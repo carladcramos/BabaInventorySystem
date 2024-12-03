@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   const searchInput = document.getElementById("searchInput");
   const categoryFilter = document.getElementById("categoryFilter");
   const statusFilter = document.getElementById("statusFilter");
-  const addProductBtn = document.getElementById("addProductBtn");
   const productTable = document.getElementById("productTable").getElementsByTagName("tbody")[0];
   const addItemForm = document.getElementById("addItemForm");
 
@@ -15,16 +14,12 @@ document.addEventListener("DOMContentLoaded", async function () {
       categories.forEach((category) => {
         categoryFilter.innerHTML += `<option value="${category}">${category}</option>`;
       });
-      const categorySelect = document.getElementById("category");
-      categorySelect.innerHTML = categories
-        .map((category) => `<option value="${category}">${category}</option>`)
-        .join("");
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
   }
 
-  // Fetch products from the backend
+  // Fetch and render products
   async function fetchProducts() {
     try {
       const response = await fetch("/api/products");
@@ -55,101 +50,103 @@ document.addEventListener("DOMContentLoaded", async function () {
       `;
     });
 
-    // Add event listeners for restock, edit, and delete buttons
-    const restockButtons = document.querySelectorAll(".restock-btn");
-    restockButtons.forEach((button) => {
-      button.addEventListener("click", async (e) => {
-        const productId = e.target.dataset.id;
-        const newStock = prompt("Enter new stock value:");
-
-        if (newStock && !isNaN(newStock)) {
-          try {
-            const response = await fetch(`/api/products/restock/${productId}`, {
-              method: "PATCH",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ stock: parseInt(newStock) }),
-            });
-
-            if (response.ok) {
-              alert("Product restocked successfully!");
-              await fetchProducts();
-            } else {
-              alert("Error restocking product.");
-            }
-          } catch (error) {
-            console.error("Error restocking product:", error);
-          }
-        } else {
-          alert("Invalid stock value");
-        }
-      });
-    });
-
-    const editButtons = document.querySelectorAll(".edit-btn");
-    editButtons.forEach((button) => {
-      button.addEventListener("click", async (e) => {
-        const productId = e.target.dataset.id;
-        // Here, you could open a modal or pre-fill a form with the current product details for editing
-        const product = await fetch(`/api/products/${productId}`).then((res) => res.json());
-        const newName = prompt("Enter new product name", product.name);
-        const newCategory = prompt("Enter new category", product.category);
-        const newStock = prompt("Enter new stock value", product.stock);
-        const newThreshold = prompt("Enter new threshold", product.threshold);
-
-        if (newName && newCategory && newStock && newThreshold) {
-          try {
-            const response = await fetch(`/api/products/${productId}`, {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                name: newName,
-                category: newCategory,
-                stock: parseInt(newStock),
-                threshold: parseInt(newThreshold),
-              }),
-            });
-
-            if (response.ok) {
-              alert("Product updated successfully!");
-              await fetchProducts();
-            } else {
-              alert("Error updating product.");
-            }
-          } catch (error) {
-            console.error("Error updating product:", error);
-          }
-        } else {
-          alert("Please fill out all fields.");
-        }
-      });
-    });
-
-    const deleteButtons = document.querySelectorAll(".delete-btn");
-    deleteButtons.forEach((button) => {
-      button.addEventListener("click", async (e) => {
-        const productId = e.target.dataset.id;
-        const confirmDelete = confirm("Are you sure you want to delete this product?");
-        if (confirmDelete) {
-          try {
-            const response = await fetch(`/api/products/${productId}`, {
-              method: "DELETE",
-            });
-
-            if (response.ok) {
-              alert("Product deleted successfully!");
-              await fetchProducts();
-            } else {
-              alert("Error deleting product.");
-            }
-          } catch (error) {
-            console.error("Error deleting product:", error);
-          }
-        }
-      });
-    });
+    attachEventListeners();
   }
 
-  // Filter functionality
+  // Add event listeners for table actions
+  function attachEventListeners() {
+    document.querySelectorAll(".restock-btn").forEach((button) =>
+      button.addEventListener("click", handleRestock)
+    );
+    document.querySelectorAll(".edit-btn").forEach((button) =>
+      button.addEventListener("click", handleEdit)
+    );
+    document.querySelectorAll(".delete-btn").forEach((button) =>
+      button.addEventListener("click", handleDelete)
+    );
+  }
+
+  async function handleRestock(e) {
+    const productId = e.target.dataset.id;
+    const newStock = prompt("Enter new stock value:");
+    if (newStock && !isNaN(newStock)) {
+      try {
+        const response = await fetch(`/api/products/restock/${productId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ stock: parseInt(newStock, 10) }),
+        });
+
+        if (response.ok) {
+          alert("Product restocked successfully!");
+          await fetchProducts();
+        } else {
+          alert("Error restocking product.");
+        }
+      } catch (error) {
+        console.error("Error restocking product:", error);
+      }
+    } else {
+      alert("Invalid stock value.");
+    }
+  }
+
+  async function handleEdit(e) {
+    const productId = e.target.dataset.id;
+    try {
+      const product = await fetch(`/api/products/${productId}`).then((res) => res.json());
+      const newName = prompt("Enter new product name", product.name);
+      const newCategory = prompt("Enter new category", product.category);
+      const newStock = prompt("Enter new stock value", product.stock);
+      const newThreshold = prompt("Enter new threshold", product.threshold);
+
+      if (newName && newCategory && newStock && newThreshold) {
+        const response = await fetch(`/api/products/${productId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: newName,
+            category: newCategory,
+            stock: parseInt(newStock, 10),
+            threshold: parseInt(newThreshold, 10),
+          }),
+        });
+
+        if (response.ok) {
+          alert("Product updated successfully!");
+          await fetchProducts();
+        } else {
+          alert("Error updating product.");
+        }
+      } else {
+        alert("Please fill out all fields.");
+      }
+    } catch (error) {
+      console.error("Error editing product:", error);
+    }
+  }
+
+  async function handleDelete(e) {
+    const productId = e.target.dataset.id;
+    const confirmDelete = confirm("Are you sure you want to delete this product?");
+    if (confirmDelete) {
+      try {
+        const response = await fetch(`/api/products/${productId}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          alert("Product deleted successfully!");
+          await fetchProducts();
+        } else {
+          alert("Error deleting product.");
+        }
+      } catch (error) {
+        console.error("Error deleting product:", error);
+      }
+    }
+  }
+
   async function filterTable() {
     try {
       const response = await fetch("/api/products");
@@ -164,6 +161,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           product.name.toLowerCase().includes(searchValue) || product._id.includes(searchValue);
         const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
         const matchesStatus = selectedStatus === "all" || product.status === selectedStatus;
+
         return matchesSearch && matchesCategory && matchesStatus;
       });
 
@@ -173,7 +171,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  // Add product
   addItemForm.addEventListener("submit", async function (e) {
     e.preventDefault();
     const productName = document.getElementById("productName").value.trim();
@@ -213,12 +210,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   });
 
-  // Event listeners
   searchInput.addEventListener("input", filterTable);
   categoryFilter.addEventListener("change", filterTable);
   statusFilter.addEventListener("change", filterTable);
 
-  // Initialize the page
   await fetchCategories();
   await fetchProducts();
 });

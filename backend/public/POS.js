@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const response = await fetch("/api/sales/confirm", {
+      const response = await fetch("/api/products/confirm-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderList }),
